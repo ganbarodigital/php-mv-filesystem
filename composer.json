@@ -1,0 +1,26 @@
+{
+    "name": "ganbarodigital/php-mv-filesystem",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "authors": [
+        { "name": "Stuart Herbert", "email": "stuart@stuartherbert.com" }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/stuartherbert/Couscous"
+        }
+    ],
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "GanbaroDigital\\Filesystem\\": "src/"
+        }
+    },
+    "require": {
+        "ganbarodigital/php-the-missing-bits": "^1.9",
+        "php": ">= 7.0",
+        "couscous/couscous": "dev-develop"
+    }
+}

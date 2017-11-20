@@ -73,7 +73,7 @@ interface PathInfo
      *
      * @return string
      */
-    public function getFilename() : string;
+    public function getFullPath() : string;
 
     /**
      * what is the filename, without any parent folders?

@@ -11,16 +11,17 @@
             "url": "https://github.com/stuartherbert/Couscous"
         }
     ],
-    "require-dev": {
+    "require": {
+        "ganbarodigital/php-the-missing-bits": "dev-develop as 1.10.0",
+        "ganbarodigital/php-mv-adapters-plugins": "dev-develop as 1.2017111401",
+        "php": ">= 7.0"
+	},
+	"require-dev": {
+        "couscous/couscous": "dev-develop"
     },
     "autoload": {
         "psr-4": {
             "GanbaroDigital\\Filesystem\\": "src/"
         }
-    },
-    "require": {
-        "ganbarodigital/php-the-missing-bits": "^1.9",
-        "php": ">= 7.0",
-        "couscous/couscous": "dev-develop"
     }
 }

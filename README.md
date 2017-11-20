@@ -1,12 +1,12 @@
 # Filesystem Library
 
-[![GitHub license](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://raw.githubusercontent.com/ganbarodigital/php-mv-file-system/develop/LICENSE.md)
+[![GitHub license](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://raw.githubusercontent.com/ganbarodigital/php-mv-filesystem/develop/LICENSE.md)
 [![@ganbarodigital on Twitter](http://img.shields.io/badge/twitter-%40ganbarodigital-blue.svg?style=flat)](https://twitter.com/ganbarodigital)
-[![Total Downloads](https://img.shields.io/packagist/dt/ganbarodigital/php-mv-file-system.svg?style=flat)](https://packagist.org/packages/ganbarodigital/php-mv-file-system)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ganbarodigital/php-mv-file-system/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ganbarodigital/php-mv-file-system/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/ganbarodigital/php-mv-file-system/badge.svg)](https://coveralls.io/r/ganbarodigital/php-mv-file-system)
-[![Dependency Status](https://www.versioneye.com/php/ganbarodigital:php-mv-file-system/dev-master/badge.svg)](https://www.versioneye.com/php/ganbarodigital:php-mv-file-system/dev-master)
-[![Reference Status](https://www.versioneye.com/php/ganbarodigital:php-mv-file-system/reference_badge.svg?style=flat)](https://www.versioneye.com/php/ganbarodigital:php-mv-file-system/references)
+[![Total Downloads](https://img.shields.io/packagist/dt/ganbarodigital/php-mv-filesystem.svg?style=flat)](https://packagist.org/packages/ganbarodigital/php-mv-filesystem)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ganbarodigital/php-mv-filesystem/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ganbarodigital/php-mv-filesystem/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/ganbarodigital/php-mv-filesystem/badge.svg)](https://coveralls.io/r/ganbarodigital/php-mv-filesystem)
+[![Dependency Status](https://www.versioneye.com/php/ganbarodigital:php-mv-filesystem/dev-master/badge.svg)](https://www.versioneye.com/php/ganbarodigital:php-mv-filesystem/dev-master)
+[![Reference Status](https://www.versioneye.com/php/ganbarodigital:php-mv-filesystem/reference_badge.svg?style=flat)](https://www.versioneye.com/php/ganbarodigital:php-mv-filesystem/references)
 
 ## Introduction
 

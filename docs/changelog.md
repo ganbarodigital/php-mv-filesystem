@@ -11,3 +11,4 @@
   - Added `FileInfo` interface
 * Added support for iterating over filesystems
   - Added `FilesystemContentsIterator` iterator
+  - Added `RecursiveFilesystemContentsIterator` iterator

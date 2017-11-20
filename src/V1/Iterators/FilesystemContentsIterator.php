@@ -41,32 +41,72 @@
  * @link      http://ganbarodigital.github.io/php-mv-s3-filesystem-sdk3
  */
 
-namespace GanbaroDigital\S3Filesystem\V1\Iterators;
+namespace GanbaroDigital\Filesystem\V1\Iterators;
 
 use OutOfBoundsException;
 use SeekableIterator;
 use GanbaroDigital\Filesystem\V1\FilesystemContents;
 use GanbaroDigital\Filesystem\V1\FileInfo;
 
+/**
+ * iterate across a tree of filesystem contents
+ */
 class FilesystemContentsIterator implements SeekableIterator
 {
     const CURRENT_AS_FILEINFO = 0;
-    const CURRENT_AS_PATHNAME = 1;
+    const CURRENT_AS_FULLPATH = 1;
     const KEY_AS_FULLPATH = 0;
     const KEY_AS_FILENAME = 256;
     const FOLLOW_SYMLINKS = 512;
     const SKIP_DOTS = 4096;
 
-    private $position = 0;
+    /**
+     * the data that we are iterating over
+     *
+     * @var FilesystemContents
+     */
     private $contents;
 
-    private $keys;
+    /**
+     * keep track of where we are when the iterator is seeking
+     *
+     * we use this as an index into $this->filenames
+     * @var integer
+     */
+    private $position = 0;
 
+    /**
+     * a list of the filenames in $contents
+     *
+     * we cache them here to make the iterator code easier
+     *
+     * @var string[]
+     */
+    private $filenames;
+
+    /**
+     * our constructor
+     *
+     * @param FilesystemContents $contents
+     *        the data that we will iterate over
+     * @param int $flags
+     *        change these to change the behaviour of this iterator
+     */
     public function __construct(FilesystemContents $contents, int $flags = self::KEY_AS_FULLPATH | self::CURRENT_AS_FILEINFO | self::SKIP_DOTS)
     {
         $this->contents = $contents;
-        $this->keys = $contents->getKeys();
+        $this->filenames = $contents->getFilenames();
         $this->flags = $flags;
+    }
+
+    /**
+     * what flags were set for this iterator?
+     *
+     * @return int
+     */
+    public function getFlags()
+    {
+        return $this->flags;
     }
 
     // ==================================================================
@@ -75,9 +115,9 @@ class FilesystemContentsIterator implements SeekableIterator
     //
     // ------------------------------------------------------------------
 
-    public function seek(int $position)
+    public function seek($position)
     {
-        if (!isset($this->keys[$position])) {
+        if (!isset($this->filenames[$position])) {
             throw new OutOfBoundsException("invalid seek position ($position)");
         }
 
@@ -90,38 +130,72 @@ class FilesystemContentsIterator implements SeekableIterator
     //
     // ------------------------------------------------------------------
 
+    /**
+     * get the file or folder that the iterator is currently pointing at
+     *
+     * the return type is decided by the flags passed into the constructor
+     *
+     * @return string|FileInfo
+     */
     public function current()
     {
-        if ($this->flags && self::CURRENT_AS_FULLPATH) {
-            return $this->keys[$this->position];
+        if ($this->flags & self::CURRENT_AS_FULLPATH) {
+            return $this->filenames[$this->position];
         }
 
-        return $this->listing->getFileInfo($this->keys[$this->position]);
+        return $this->contents->getFileInfo($this->filenames[$this->position]);
     }
 
+    /**
+     * get the filename or folder name that the iterator is currently
+     * pointing at
+     *
+     * the return value (full path, or just the filename with the parent
+     * folders stripped off) is decided by the flags passed into the
+     * constructor
+     *
+     * @return string
+     */
     public function key() : string
     {
         // shorthand
-        $retval = $this->keys[$this->position];
-        if ($this->flags && self::KEY_AS_PATHNAME) {
+        $retval = $this->filenames[$this->position];
+        if ($this->flags & self::KEY_AS_PATHNAME) {
             return $retval;
         }
 
         return basename($retval);
     }
 
+    /**
+     * move to the next position in the contents list
+     *
+     * @return void
+     */
     public function next()
     {
         $this->position++;
     }
 
+    /**
+     * move back to the first item in the contents list
+     *
+     * @return void
+     */
     public function rewind()
     {
         $this->position = 0;
     }
 
+    /**
+     * is the iterator currently pointing at something in the contents list?
+     *
+     * @return bool
+     *         - `true` if we are
+     *         - `false` if we have iterated past the end of the list
+     */
     public function valid() : bool
     {
-        return isset($this->keys[$this->position]);
+        return isset($this->filenames[$this->position]);
     }
 }

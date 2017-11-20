@@ -4,6 +4,7 @@
 
 ### New
 
-* Added abstractions for filesystem paths and contents
+* Added abstractions for use in plugins
+  - Added `Filesystem` interface
   - Added `PathInfo` interface
   - Added `FileInfo` interface

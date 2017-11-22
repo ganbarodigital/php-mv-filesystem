@@ -44,28 +44,13 @@
 namespace GanbaroDigital\Filesystem\V1;
 
 /**
- * represents a path
+ * represents a path on a filesystem
  *
- * a path consists of:
- *
- *     <scheme>://<filename>[.<extension>]
- *
- * where:
- *
- * - `<scheme>` is the filesystem name
- * - `<filename>` is the path to the file, including the filename itself
- * - `<extension>` is the suffix, commonly used to say what kind of file
- *   this is
+ * this is a lightweight value that only knows about the path itself,
+ * and knows nothing about what the path points at
  */
 interface PathInfo
 {
-    /**
-     * get the name of the filesystem that this path is part of
-     *
-     * @return string
-     */
-    public function getScheme() : string;
-
     /**
      * what is the filename itself?
      *

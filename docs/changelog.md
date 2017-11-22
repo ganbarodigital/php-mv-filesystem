@@ -16,3 +16,4 @@
   - Added `FindAllFolders` high-level iterator
 * Added support for understanding filesystem contents
   - Added `IsFile` check
+  - Added `IsFolder` check

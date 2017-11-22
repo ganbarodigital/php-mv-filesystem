@@ -19,6 +19,7 @@
   - Added `IsFile` check
   - Added `IsFolder` check
 * Added helpful type converters
+  - Added `ToFileInfo`
   - Added `ToPathComponents`
   - Added `ToPathInfo`
   - Added `ToPrefixedPath`

@@ -46,6 +46,7 @@ namespace GanbaroDigital\Filesystem\V1\Checks;
 use GanbaroDigital\AdaptersAndPlugins\V1\Operations\CallPlugin;
 use GanbaroDigital\Filesystem\V1\Filesystem;
 use GanbaroDigital\Filesystem\V1\FileInfo;
+use GanbaroDigital\Filesystem\V1\TypeConverters;
 use GanbaroDigital\MissingBits\Checks\Check;
 use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
@@ -89,7 +90,7 @@ class IsFolder implements Check
 
         /** @var FileInfo */
         try {
-            $file = CallPlugin::using($fs, 'TypeConverters\\ToFileInfo', 'from', $fs, $path, $onFatal);
+            $file = TypeConverters\ToFileInfo::from($fs, $path, $onFatal);
         }
         catch (\Throwable $e) {
             return false;

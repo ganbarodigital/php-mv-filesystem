@@ -43,11 +43,19 @@
 
 namespace GanbaroDigital\Filesystem\V1;
 
+use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
+
 /**
  * container; holds directory listings for us to search over
  */
-interface FilesystemContents
+interface FilesystemContents extends FileInfo
 {
+    // ==================================================================
+    //
+    // Self
+    //
+    // ------------------------------------------------------------------
+
     /**
      * return a list of the filenames at the current level
      *
@@ -56,12 +64,94 @@ interface FilesystemContents
     public function getFilenames() : array;
 
     /**
-     * get further information about a specific file
+     * get further information about a specific path at the current level
      *
      * @param  string $filename
      *         the filename you are interested in
+     * @param  OnFatal $onFatal
+     *         what do we do if we do not have the file?
      * @return FileInfo
-     *         details about $filename
      */
-    public function getFileInfo($filename) : FileInfo;
+    public function getFileInfo(string $filename, OnFatal $onFatal) : FileInfo;
+
+    // ==================================================================
+    //
+    // Files
+    //
+    // ------------------------------------------------------------------
+
+    /**
+     * get further information about a specific file at the current level
+     *
+     * @param  string $filename
+     *         the filename you are interested in
+     * @param  OnFatal $onFatal
+     *         what do we do if we do not have the file?
+     * @return FileInfo
+     */
+    public function getFile(string $filename, OnFatal $onFatal) : FileInfo;
+
+    /**
+     * do we have a file called $filename at the current level?
+     *
+     * @param  string $filename
+     *         what is the file we are looking for?
+     * @return bool
+     *         - `true` if $filename exists at the current level,
+     *           and it is not a folder
+     *         - `false` otherwise
+     */
+    public function hasFile(string $filename) : bool;
+
+    /**
+     * add a child file to the list that we know about
+     *
+     * @param  string $filename
+     *         what is the file that we are adding?
+     * @param  mixed $fileDetails
+     *         further information about the file, specific to the individual
+     *         filesystem
+     * @return void
+     */
+    public function trackFile(string $filename, $fileDetails);
+
+    // ==================================================================
+    //
+    // Folders
+    //
+    // ------------------------------------------------------------------
+
+    /**
+     * get the container for a child folder
+     *
+     * @param  string $filename
+     *         what is the folder that we are looking for?
+     * @param  OnFatal $onFatal
+     *         what do we do if we do not have the folder?
+     * @return FilesystemContents
+     */
+    public function getFolder(string $filename, OnFatal $onFatal) : FilesystemContents;
+
+    /**
+     * do we have a folder called $filename at the current level?
+     *
+     * @param  string $filename
+     *         what is the folder we are looking for?
+     * @return bool
+     *         - `true` if $filename exists at the current level,
+     *           and it is a folder
+     *         - `false` otherwise
+     */
+    public function hasFolder(string $filename) : bool;
+
+    /**
+     * add a child folder to the list that we are tracking
+     *
+     * @param string $filename
+     *        what is the folder that we are adding?
+     * @param mixed $fileInfo
+     *        further information about the folder, specific to the individual
+     *        filesystem
+     */
+    public function trackFolder(string $filename, $fileInfo);
 }

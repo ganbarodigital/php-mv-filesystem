@@ -38,16 +38,15 @@
  * @author    Stuart Herbert <stuherbert@ganbarodigital.com>
  * @copyright 2017-present Ganbaro Digital Ltd www.ganbarodigital.com
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://ganbarodigital.github.io/php-mv-s3-filesystem-sdk3
+ * @link      http://ganbarodigital.github.io/php-mv-filesystem-plugin-s3-sdk3
  */
 
 namespace GanbaroDigital\Filesystem\V1\Iterators;
 
-use OutOfBoundsException;
 use SeekableIterator;
 use RecursiveIterator;
-use GanbaroDigital\Filesystem\V1\FilesystemContents;
 use GanbaroDigital\Filesystem\V1\FileInfo;
+use GanbaroDigital\Filesystem\V1\FilesystemContents;
 
 /**
  * iterate across a tree of filesystem contents
@@ -55,6 +54,22 @@ use GanbaroDigital\Filesystem\V1\FileInfo;
 class RecursiveFilesystemContentsIterator extends FilesystemContentsIterator
     implements RecursiveIterator, SeekableIterator
 {
+    /**
+     * our constructor
+     *
+     * @param FilesystemContents $contents
+     *        the data that we will iterate over
+     */
+    public function __construct(FilesystemContents $contents)
+    {
+        // we need to make sure that we're using the correct flags with
+        // the iterator that we are extending
+        parent::__construct(
+            $contents,
+            self::KEY_AS_FULLPATH | self::CURRENT_AS_FILEINFO | self::SKIP_DOTS
+        );
+    }
+
     // ==================================================================
     //
     // RecursiveIterator interface

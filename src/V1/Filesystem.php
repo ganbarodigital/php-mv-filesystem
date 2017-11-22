@@ -43,8 +43,37 @@
 
 namespace GanbaroDigital\Filesystem\V1;
 
-// use GanbaroDigital\AdaptersAndPlugins\V1\PluginTypes\PluginProvider;
+use GanbaroDigital\AdaptersAndPlugins\V1\PluginTypes\PluginProvider;
+use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
-interface Filesystem
+/**
+ * represents a filesystem: something that can look like, and act like,
+ * a collection of files and folders
+ *
+ * doesn't have to be a real filesystem
+ */
+interface Filesystem extends PluginProvider
 {
+    /**
+     * retrieve a folder from the filesystem
+     *
+     * @param  string $fullPath
+     *         path to the folder
+     * @param  OnFatal $onFailure
+     *         what do we do if we do not have the folder?
+     * @return FilesystemContents
+     */
+    public function getFolder(string $fullPath, OnFatal $onFatal) : FilesystemContents;
+
+    /**
+     * get detailed information about something on the filesystem
+     *
+     * @param  string $fullPath
+     *         the full path to the thing you are interested in
+     * @param  OnFatal $onFatal
+     *         what do we do if we do not have it?
+     * @return FileInfo
+     */
+    public function getFileInfo(string $fullPath, OnFatal $onFatal) : FileInfo;
+
 }

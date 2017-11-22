@@ -13,3 +13,4 @@
   - Added `FilesystemContentsIterator` iterator
   - Added `RecursiveFilesystemContentsIterator` iterator
   - Added `FindAllFiles` high-level iterator
+  - Added `FindAllFolders` high-level iterator

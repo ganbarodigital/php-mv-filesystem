@@ -47,6 +47,7 @@ use GanbaroDigital\AdaptersAndPlugins\V1\Operations\CallPlugin;
 use GanbaroDigital\Filesystem\V1\Filesystem;
 use GanbaroDigital\Filesystem\V1\FileInfo;
 use GanbaroDigital\MissingBits\Checks\Check;
+use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
 /**
  * do we have a file on the filesystem?
@@ -84,8 +85,15 @@ class IsFile implements Check
      */
     public static function check(Filesystem $fs, $path)
     {
+        // we don't care what gets thrown, only that it does
+        $onFatal = new OnFatal(function() { return null;});
+
         /** @var FileInfo */
-        $file = CallPlugin::using($fs, 'TypeConverters\\ToFileInfo', 'from', $fs, $path);
+        try {
+            $file = CallPlugin::using($fs, 'TypeConverters\\ToFileInfo', 'from', $fs, $path, $onFatal);
+        } catch (\Throwable $e) {
+            return false;
+        }
 
         // is this a real file?
         if ($file->isFile()) {

@@ -18,3 +18,7 @@
 * Added support for understanding filesystem contents
   - Added `IsFile` check
   - Added `IsFolder` check
+* Added helpful type converters
+  - Added `ToPathComponents`
+  - Added `ToPathInfo`
+  - Added `ToPrefixedPath`

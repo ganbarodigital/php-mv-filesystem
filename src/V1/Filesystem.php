@@ -55,6 +55,13 @@ use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 interface Filesystem extends PluginProvider
 {
     /**
+     * which prefix should we use for paths on this filesystem?
+     *
+     * @return string
+     */
+    public function getFilesystemPrefix() : string;
+
+    /**
      * retrieve a folder from the filesystem
      *
      * @param  string|PathInfo $fullPath

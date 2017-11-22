@@ -47,6 +47,8 @@ use GanbaroDigital\AdaptersAndPlugins\V1\Operations\CallPlugin;
 use GanbaroDigital\Filesystem\V1\Checks;
 use GanbaroDigital\Filesystem\V1\FileInfo;
 use GanbaroDigital\Filesystem\V1\Filesystem;
+use GanbaroDigital\Filesystem\V1\PathInfo;
+use GanbaroDigital\Filesystem\V1\TypeConverters;
 use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
 use RecursiveIterator;
@@ -67,7 +69,7 @@ class FindAllFiles
      *
      * @param  Filesystem $fs
      *         the filesystem we are searching
-     * @param  string $path
+     * @param  string|PathInfo $path
      *         the path to search
      * @param  OnFatal $onFatal
      *         what do we do if we cannot find any files?
@@ -76,10 +78,13 @@ class FindAllFiles
      * @return FileInfo
      *         we yield a FileInfo object for every file found
      */
-    public static function in(Filesystem $fs, string $path, OnFatal $onFatal, int $searchOrder = RecursiveIteratorIterator::CHILD_FIRST)
+    public static function in(Filesystem $fs, $path, OnFatal $onFatal, int $searchOrder = RecursiveIteratorIterator::CHILD_FIRST)
     {
+        // what are we looking at?
+        $pathInfo = TypeConverters\ToPathInfo::from($path);
+
         // how will we examine the filesystem?
-        $iterator = static::getIterator($fs, $path, $onFatal);
+        $iterator = static::getIterator($fs, $pathInfo, $onFatal);
 
         // we can re-use PHP's built-in recursive support to find
         // what we are looking for
@@ -107,14 +112,14 @@ class FindAllFiles
      *
      * @param  Filesystem $fs
      *         the filesystem we are searching
-     * @param  string $path
+     * @param  PathInfo $path
      *         the path to search
      * @param  OnFatal $onFatal
      *         what do we throw if we cannot create the iterator?
      * @return RecursiveIterator
      *         how we will access the filesystem contents
      */
-    protected static function getIterator(Filesystem $fs, string $path, OnFatal $onFatal) : RecursiveIterator
+    protected static function getIterator(Filesystem $fs, PathInfo $path, OnFatal $onFatal) : RecursiveIterator
     {
         // ask the filesystem to cough up a suitable iterator
         return CallPlugin::using($fs, 'Iterators\\GetContentsIterator', 'for', $fs, $path, $onFatal);

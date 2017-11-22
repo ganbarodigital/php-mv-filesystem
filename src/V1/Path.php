@@ -46,30 +46,67 @@ namespace GanbaroDigital\Filesystem\V1;
 /**
  * represents a path on a filesystem
  *
- * this is a lightweight value that only knows about the path itself,
- * and knows nothing about what the path points at
+ * this knows which filesystem it is on
  */
-interface PathInfo
+class Path implements PathInfo
 {
     /**
-     * what marker separates the filesystem prefix from the path on
-     * that filesystem?
+     * which filesystem (by prefix) are we on?
+     *
+     * @var string
      */
-    const FS_SEPARATOR = '::';
+    protected $fsPrefix = 'unknown';
+
+    /**
+     * what is the path on this filesystem?
+     * @var string
+     */
+    protected $fsPath;
+
+    /**
+     * our constructor
+     *
+     * @param string $path
+     *        the 'fsPrefix::fsPath' that we will represent
+     */
+    public function __construct(string $path)
+    {
+        $parts = TypeConverters\ToPathComponents::from($path);
+        $this->fsPrefix = $parts[0];
+        $this->fsPath = $parts[1];
+    }
 
     /**
      * which filesystem does this path belong to?
      *
      * @return string
      */
-    public function getFilesystemPrefix() : string;
+    public function getFilesystemPrefix() : string
+    {
+        return $this->fsPrefix;
+    }
 
     /**
      * what is our full path, including our filesystem prefix?
      *
      * @return string
      */
-    public function getPrefixedPath() : string;
+    public function getPrefixedPath() : string
+    {
+        return $this->fsPrefix . '::' . $this->fsPath;
+    }
+
+    /**
+     * automatic type-conversion to string
+     *
+     * this returns the full prefixed path
+     *
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return $this->getPrefixedPath();
+    }
 
     /**
      * what is the filename itself?
@@ -78,14 +115,27 @@ interface PathInfo
      *
      * @return string
      */
-    public function getFullPath() : string;
+    public function getFullPath() : string
+    {
+        return $this->fsPath;
+    }
 
     /**
      * what is the filename, without any parent folders?
      *
      * @return string
      */
-    public function getBasename() : string;
+    public function getBasename() : string
+    {
+        // we only want to build this once
+        static $basename = false;
+        if (!$basename) {
+            $basename = basename($this->fsPath);
+        }
+
+        // all done
+        return $basename;
+    }
 
     /**
      * what is the parent folder for this filename?
@@ -94,7 +144,17 @@ interface PathInfo
      *
      * @return string
      */
-    public function getDirname() : string;
+    public function getDirname() : string
+    {
+        // we only want to build this once
+        static $dirname = false;
+        if (!$dirname) {
+            $dirname = dirname($this->fsPath);
+        }
+
+        // all done
+        return $dirname;
+    }
 
     /**
      * what is the file extension of this path info?
@@ -103,5 +163,14 @@ interface PathInfo
      *
      * @return string
      */
-    public function getExtension() : string;
+    public function getExtension() : string
+    {
+        static $ext = false;
+
+        if (!$ext) {
+            $ext = pathinfo($this->fsPath, PATHINFO_EXTENSION);
+        }
+
+        return $ext;
+    }
 }

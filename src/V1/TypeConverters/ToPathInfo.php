@@ -33,47 +33,35 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category  Libraries
- * @package   Filesystem\V1
  * @author    Stuart Herbert <stuherbert@ganbarodigital.com>
  * @copyright 2017-present Ganbaro Digital Ltd www.ganbarodigital.com
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://ganbarodigital.github.io/php-mv-filesystem
  */
 
-namespace GanbaroDigital\Filesystem\V1;
+namespace GanbaroDigital\Filesystem\V1\TypeConverters;
 
-use GanbaroDigital\AdaptersAndPlugins\V1\PluginTypes\PluginProvider;
-use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
+use GanbaroDigital\Filesystem\V1\Path;
+use GanbaroDigital\Filesystem\V1\PathInfo;
 
 /**
- * represents a filesystem: something that can look like, and act like,
- * a collection of files and folders
- *
- * doesn't have to be a real filesystem
+ * convert to a PathInfo value object
  */
-interface Filesystem extends PluginProvider
+class ToPathInfo
 {
     /**
-     * retrieve a folder from the filesystem
+     * convert to a PathInfo value object
      *
-     * @param  string|PathInfo $fullPath
-     *         path to the folder
-     * @param  OnFatal $onFailure
-     *         what do we do if we do not have the folder?
-     * @return FilesystemContents
+     * @param  string|PathInfo $path
+     *         the value that might need converting
+     * @return PathInfo
      */
-    public function getFolder($fullPath, OnFatal $onFatal) : FilesystemContents;
+    public static function from($path) : PathInfo
+    {
+        if ($path instanceof PathInfo) {
+            return $path;
+        }
 
-    /**
-     * get detailed information about something on the filesystem
-     *
-     * @param  string|PathInfo $fullPath
-     *         the full path to the thing you are interested in
-     * @param  OnFatal $onFatal
-     *         what do we do if we do not have it?
-     * @return FileInfo
-     */
-    public function getFileInfo($fullPath, OnFatal $onFatal) : FileInfo;
-
+        return new Path($path);
+    }
 }

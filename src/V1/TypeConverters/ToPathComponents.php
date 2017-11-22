@@ -33,47 +33,44 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category  Libraries
- * @package   Filesystem\V1
  * @author    Stuart Herbert <stuherbert@ganbarodigital.com>
  * @copyright 2017-present Ganbaro Digital Ltd www.ganbarodigital.com
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://ganbarodigital.github.io/php-mv-filesystem
  */
 
-namespace GanbaroDigital\Filesystem\V1;
+namespace GanbaroDigital\Filesystem\V1\TypeConverters;
 
-use GanbaroDigital\AdaptersAndPlugins\V1\PluginTypes\PluginProvider;
-use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
+use GanbaroDigital\Filesystem\V1\PathInfo;
 
 /**
- * represents a filesystem: something that can look like, and act like,
- * a collection of files and folders
- *
- * doesn't have to be a real filesystem
+ * convert a string into separate fsPrefix and fsPath components
  */
-interface Filesystem extends PluginProvider
+class ToPathComponents
 {
     /**
-     * retrieve a folder from the filesystem
+     * convert a string into separate fsPrefix and fsPath components
      *
-     * @param  string|PathInfo $fullPath
-     *         path to the folder
-     * @param  OnFatal $onFailure
-     *         what do we do if we do not have the folder?
-     * @return FilesystemContents
+     * @param  string $path
+     *         the value to convert
+     * @return array
+     *         - 0 is the fsPrefix
+     *         - 1 is the fsPath
      */
-    public function getFolder($fullPath, OnFatal $onFatal) : FilesystemContents;
+    public static function from(string $path) : array
+    {
+        $separatorPos = strpos($path, PathInfo::FS_SEPARATOR);
 
-    /**
-     * get detailed information about something on the filesystem
-     *
-     * @param  string|PathInfo $fullPath
-     *         the full path to the thing you are interested in
-     * @param  OnFatal $onFatal
-     *         what do we do if we do not have it?
-     * @return FileInfo
-     */
-    public function getFileInfo($fullPath, OnFatal $onFatal) : FileInfo;
+        // special case - no separator
+        if ($separatorPos === false) {
+            // no separator
+            return [ '', $path ];
+        }
 
+        // general case
+        return [
+            substr($path, 0, $separatorPos),
+            substr($path, $separatorPos + 2)
+        ];
+    }
 }

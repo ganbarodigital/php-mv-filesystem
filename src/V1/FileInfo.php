@@ -46,7 +46,7 @@ namespace GanbaroDigital\Filesystem\V1;
 /**
  * represents something that a path points to
  *
- * these are more expensive to create than PathInfo instances
+ * this value knows things about what the path is pointing to
  */
 interface FileInfo extends PathInfo
 {

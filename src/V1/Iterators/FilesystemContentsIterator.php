@@ -38,7 +38,7 @@
  * @author    Stuart Herbert <stuherbert@ganbarodigital.com>
  * @copyright 2017-present Ganbaro Digital Ltd www.ganbarodigital.com
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://ganbarodigital.github.io/php-mv-s3-filesystem-sdk3
+ * @link      http://ganbarodigital.github.io/php-mv-filesystem-plugin-s3-sdk3
  */
 
 namespace GanbaroDigital\Filesystem\V1\Iterators;
@@ -47,18 +47,26 @@ use OutOfBoundsException;
 use SeekableIterator;
 use GanbaroDigital\Filesystem\V1\FilesystemContents;
 use GanbaroDigital\Filesystem\V1\FileInfo;
+use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
 /**
  * iterate across a tree of filesystem contents
  */
 class FilesystemContentsIterator implements SeekableIterator
 {
-    const CURRENT_AS_FILEINFO = 0;
-    const CURRENT_AS_FULLPATH = 1;
-    const KEY_AS_FULLPATH = 0;
-    const KEY_AS_FILENAME = 256;
-    const FOLLOW_SYMLINKS = 512;
-    const SKIP_DOTS = 4096;
+    const CURRENT_AS_FILEINFO = 1;
+    const CURRENT_AS_FULLPATH = 2;
+
+    // 2^8
+    const KEY_AS_FULLPATH = 256;
+    // 2^9
+    const KEY_AS_FILENAME = 512;
+
+    // 2^16
+    const FOLLOW_SYMLINKS = 65536;
+
+    // 2^14
+    const SKIP_DOTS = 16777216;
 
     /**
      * the data that we are iterating over
@@ -66,6 +74,13 @@ class FilesystemContentsIterator implements SeekableIterator
      * @var FilesystemContents
      */
     private $contents;
+
+    /**
+     * the bitmask that decides on some of our behaviour
+     *
+     * @var int
+     */
+    private $flags;
 
     /**
      * keep track of where we are when the iterator is seeking
@@ -85,6 +100,29 @@ class FilesystemContentsIterator implements SeekableIterator
     private $filenames;
 
     /**
+     * what to do if we cannot get FileInfo about the current() item
+     *
+     * for performance, we define it once and re-use it many times
+     *
+     * @var OnFatal
+     */
+    private $currentOnFatal;
+
+    /**
+     * the return value that current() points at
+     *
+     * for performance, we generate this whenever we move the iterator,
+     * to avoid generating it when there are multiple calls to current()
+     * before the iterator moves again
+     *
+     * @var string|FileInfo
+     */
+    private $currentRetval;
+
+    private $currentReturnsFullPath = false;
+    private $currentReturnsFileInfo = false;
+
+    /**
      * our constructor
      *
      * @param FilesystemContents $contents
@@ -95,8 +133,19 @@ class FilesystemContentsIterator implements SeekableIterator
     public function __construct(FilesystemContents $contents, int $flags = self::KEY_AS_FULLPATH | self::CURRENT_AS_FILEINFO | self::SKIP_DOTS)
     {
         $this->contents = $contents;
-        $this->filenames = $contents->getFilenames();
+        $this->filenames = $contents->getFilenames($flags);
         $this->flags = $flags;
+
+        // creating it once, here, delivers a significant
+        // performance increase
+        $this->currentOnFatal = new OnFatal(function() { return null; });
+
+        // calculate the flags once, to save some CPU
+        $this->currentReturnsFileInfo = ($flags & self::CURRENT_AS_FILEINFO) ? true : false;
+        $this->currentReturnsFullPath = ($flags & self::CURRENT_AS_FULLPATH) ? true : false;
+
+        // let's get sorted
+        $this->rewind();
     }
 
     /**
@@ -139,11 +188,12 @@ class FilesystemContentsIterator implements SeekableIterator
      */
     public function current()
     {
-        if ($this->flags & self::CURRENT_AS_FULLPATH) {
-            return $this->filenames[$this->position];
+        if ($this->currentReturnsFullPath) {
+            return $this->contents->getFullPath() . '/' .$this->filenames[$this->position];
         }
 
-        return $this->contents->getFileInfo($this->filenames[$this->position]);
+        // we've already built this, in either rewind() or next()
+        return $this->currentFileInfo;
     }
 
     /**
@@ -160,7 +210,7 @@ class FilesystemContentsIterator implements SeekableIterator
     {
         // shorthand
         $retval = $this->filenames[$this->position];
-        if ($this->flags & self::KEY_AS_PATHNAME) {
+        if ($this->flags & self::KEY_AS_FULLPATH) {
             return $retval;
         }
 
@@ -175,6 +225,9 @@ class FilesystemContentsIterator implements SeekableIterator
     public function next()
     {
         $this->position++;
+
+        // prebuild the fileinfo we want $this->current() to return
+        $this->buildCurrentFileInfo();
     }
 
     /**
@@ -185,6 +238,9 @@ class FilesystemContentsIterator implements SeekableIterator
     public function rewind()
     {
         $this->position = 0;
+
+        // prebuild the fileinfo we want $this->current() to return
+        $this->buildCurrentFileInfo();
     }
 
     /**
@@ -197,5 +253,29 @@ class FilesystemContentsIterator implements SeekableIterator
     public function valid() : bool
     {
         return isset($this->filenames[$this->position]);
+    }
+
+    /**
+     * update $this->currentFileInfo property
+     *
+     * @return void
+     */
+    protected function buildCurrentFileInfo()
+    {
+        // weirdly, it's faster to set this all the time, than to set it
+        // in an `else` statement below ... go figure!
+        $this->currentFileInfo = null;
+
+        // do we really want to do this?
+        if (!$this->valid() || (!$this->currentReturnsFileInfo)) {
+            // no, we don't
+            return;
+        }
+
+        // if we get here, then we need to do this
+        $this->currentFileInfo = $this->contents->getFileInfo(
+            $this->filenames[$this->position],
+            $this->currentOnFatal
+        );
     }
 }

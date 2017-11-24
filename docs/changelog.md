@@ -23,3 +23,5 @@
   - Added `ToPathComponents`
   - Added `ToPathInfo`
   - Added `ToPrefixedPath`
+* Added support for factories to create filesystems
+  - Added `FilesystemFactory` interface

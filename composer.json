@@ -14,7 +14,8 @@
     "require": {
         "ganbarodigital/php-the-missing-bits": "dev-develop as 1.10.0",
         "ganbarodigital/php-mv-adapters-plugins": "dev-develop as 1.2017111401",
-        "php": ">= 7.0"
+        "php": ">= 7.0",
+        "psr/container": "^1.0"
 	},
 	"require-dev": {
         "couscous/couscous": "dev-develop"

@@ -65,6 +65,16 @@ interface FileInfo extends PathInfo
     public function getSize() : int;
 
     /**
+     * what is the checksum for this file?
+     *
+     * ETags are a common technique to tell if a file has changed anywhere
+     * or not
+     *
+     * @return string
+     */
+    public function getETag() : string;
+
+    /**
      * can we execute this file?
      *
      * @return bool

@@ -155,4 +155,77 @@ class Path implements PathInfo
         return pathinfo($this->fsPath, PATHINFO_EXTENSION);
     }
 
+    /**
+     * build a new Path, which is our path with extra path on the end
+     *
+     * @param  string $suffix [description]
+     * @return Path
+     */
+    public function withSuffix(string $suffix)
+    {
+        // what is our current path?
+        $parentPath = (string)$this;
+
+        // do we need to add in a path separator?
+        $separator = substr($suffix, 0, 1) == '/' ? '' : '/';
+
+        // now it is safe to join them together, and we definitely
+        // will not get any double '//' sequences
+        return new Path(rtrim($parentPath, '/') . $separator . $suffix);
+    }
+
+    /**
+     * build a new Path without any file extension
+     *
+     * @return PathInfo
+     */
+    public function stripExtension() : PathInfo
+    {
+        $currentPath = (string)$this;
+        $currentExtension = $this->getExtension();
+        $currentExtension = empty($currentExtension) ? '' : '.' . $currentExtension;
+
+        return new Path(
+            substr(
+                $currentPath,
+                0,
+                strlen($currentPath) - strlen($currentExtension)
+            )
+        );
+    }
+
+    /**
+     * build a new Path with a different file extension
+     *
+     * @param  string $newExtension
+     *         the file extension (.XXX) that you want
+     * @return PathInfo
+     */
+    public function withExtension(string $newExtension) : PathInfo
+    {
+        $nakedPath = $this->stripExtension();
+        $separator = substr($newExtension, 0, 1) == '.' ? '' : '.';
+        return new Path($nakedPath . $separator . $newExtension);
+    }
+
+    /**
+     * build a new Path for a path on a given filesystem
+     *
+     * @param  Filesystem $fs
+     *         the filesystem we want the path to be on
+     * @param  string|PathInfo $path
+     *         the path that's on the filesystem
+     * @return PathInfo
+     */
+    public static function onFilesystem($fsOrPrefix, $path)
+    {
+        $fsPrefix = $fsOrPrefix instanceof Filesystem ? $fsOrPrefix->getFilesystemPrefix() : $fsOrPrefix;
+
+        $pathInfo = TypeConverters\ToPathInfo::from($path);
+        $retval = new Path(
+            $fsPrefix . PathInfo::FS_SEPARATOR . '/'
+        );
+
+        return $retval->withSuffix($path);
+    }
 }

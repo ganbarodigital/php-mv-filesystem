@@ -45,3 +45,5 @@
   - Added `GetFileContents` operation
   - Added `Move` operation
   - Added `PutFileContents` operation
+  - Added `Transform` interface
+  - Added `ResizeImage` transform

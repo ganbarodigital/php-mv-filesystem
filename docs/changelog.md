@@ -42,3 +42,4 @@
 * Added things we can do to files and folders
   - Added `Copy` operation
   - Added `CreateTemporaryCopy` operation
+  - Added `GetFileContents` operation

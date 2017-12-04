@@ -18,6 +18,9 @@
   - Added `FindMatchingFiles` high-level iterator
   - Added `FindMatchingFolders` high-level iterator
   - Added `FindMatching` high-lvel iterator
+* Added support for understanding a path
+  - Added `DescendParentFolders` iterator
+  - Added `DescendPath` iterator
 * Added support for understanding filesystem contents
   - Added `IsFile` check
   - Added `IsFolder` check

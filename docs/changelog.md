@@ -25,3 +25,6 @@
   - Added `ToPrefixedPath`
 * Added support for factories to create filesystems
   - Added `FilesystemFactory` interface
+* Added exceptions for when things go wrong
+  - Added `FilesystemException` interface
+  - Added `CannotBuildFileInfo` exception

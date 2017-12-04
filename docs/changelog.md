@@ -44,3 +44,4 @@
   - Added `CreateTemporaryCopy` operation
   - Added `GetFileContents` operation
   - Added `Move` operation
+  - Added `PutFileContents` operation

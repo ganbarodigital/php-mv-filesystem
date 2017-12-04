@@ -43,12 +43,16 @@
 
 namespace GanbaroDigital\Filesystem\V1\Checks;
 
+use Error;
+use Exception;
 use GanbaroDigital\AdaptersAndPlugins\V1\Operations\CallPlugin;
+use GanbaroDigital\Filesystem\V1\Exceptions\CannotBuildFileInfo;
 use GanbaroDigital\Filesystem\V1\Filesystem;
 use GanbaroDigital\Filesystem\V1\FileInfo;
 use GanbaroDigital\Filesystem\V1\TypeConverters;
 use GanbaroDigital\MissingBits\Checks\Check;
 use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
+use Throwable;
 
 /**
  * do we have a file on the filesystem?
@@ -86,15 +90,13 @@ class IsFile implements Check
      */
     public static function check(Filesystem $fs, $path)
     {
-        // we don't care what gets thrown, only that it does
-        $onFatal = new OnFatal(function() { return null;});
+        // when something goes wrong, we need to tell others about it
+        $onFatal = new OnFatal(function($path, $reason) {
+            throw CannotBuildFileInfo::newFromInputParameter($path, '$path', ['reason' => $reason]);
+        });
 
         /** @var FileInfo */
-        try {
-            $file = TypeConverters\ToFileInfo::from($fs, $path, $onFatal);
-        } catch (\Throwable $e) {
-            return false;
-        }
+        $file = TypeConverters\ToFileInfo::from($fs, $path, $onFatal);
 
         // is this a real file?
         if ($file->isFile()) {

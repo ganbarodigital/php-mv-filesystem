@@ -127,14 +127,8 @@ class Path implements PathInfo
      */
     public function getBasename() : string
     {
-        // we only want to build this once
-        static $basename = false;
-        if (!$basename) {
-            $basename = basename($this->fsPath);
-        }
-
         // all done
-        return $basename;
+        return basename($this->fsPath);
     }
 
     /**
@@ -146,14 +140,7 @@ class Path implements PathInfo
      */
     public function getDirname() : string
     {
-        // we only want to build this once
-        static $dirname = false;
-        if (!$dirname) {
-            $dirname = dirname($this->fsPath);
-        }
-
-        // all done
-        return $dirname;
+        return dirname($this->fsPath);
     }
 
     /**
@@ -165,12 +152,7 @@ class Path implements PathInfo
      */
     public function getExtension() : string
     {
-        static $ext = false;
-
-        if (!$ext) {
-            $ext = pathinfo($this->fsPath, PATHINFO_EXTENSION);
-        }
-
-        return $ext;
+        return pathinfo($this->fsPath, PATHINFO_EXTENSION);
     }
+
 }

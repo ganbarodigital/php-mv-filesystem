@@ -39,3 +39,5 @@
 * Added exceptions for when things go wrong
   - Added `FilesystemException` interface
   - Added `CannotBuildFileInfo` exception
+* Added things we can do to files and folders
+  - Added `Copy` operation

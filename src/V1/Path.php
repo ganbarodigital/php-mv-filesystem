@@ -43,6 +43,8 @@
 
 namespace GanbaroDigital\Filesystem\V1;
 
+use GanbaroDigital\Filesystem\V1\BuildPathInfo;
+
 /**
  * represents a path on a filesystem
  *
@@ -156,22 +158,18 @@ class Path implements PathInfo
     }
 
     /**
-     * build a new Path, which is our path with extra path on the end
+     * build a new Path with a child file|folder appended
      *
-     * @param  string $suffix [description]
-     * @return Path
+     * @param  string $child
+     *         the value to add onto the end of the current Path
+     * @return PathInfo
      */
-    public function withSuffix(string $suffix)
+    public function withChild(string $child) : PathInfo
     {
-        // what is our current path?
-        $parentPath = (string)$this;
-
-        // do we need to add in a path separator?
-        $separator = substr($suffix, 0, 1) == '/' ? '' : '/';
-
-        // now it is safe to join them together, and we definitely
-        // will not get any double '//' sequences
-        return new Path(rtrim($parentPath, '/') . $separator . $suffix);
+        $builder = function($newPath) {
+            return new Path($newPath);
+        };
+        return BuildPathInfo\AddChild::to($this, $child, $builder);
     }
 
     /**
@@ -181,17 +179,10 @@ class Path implements PathInfo
      */
     public function stripExtension() : PathInfo
     {
-        $currentPath = (string)$this;
-        $currentExtension = $this->getExtension();
-        $currentExtension = empty($currentExtension) ? '' : '.' . $currentExtension;
-
-        return new Path(
-            substr(
-                $currentPath,
-                0,
-                strlen($currentPath) - strlen($currentExtension)
-            )
-        );
+        $builder = function($newPath) {
+            return new Path($newPath);
+        };
+        return BuildPathInfo\StripExtension::from($this, $builder);
     }
 
     /**
@@ -203,9 +194,10 @@ class Path implements PathInfo
      */
     public function withExtension(string $newExtension) : PathInfo
     {
-        $nakedPath = $this->stripExtension();
-        $separator = substr($newExtension, 0, 1) == '.' ? '' : '.';
-        return new Path($nakedPath . $separator . $newExtension);
+        $builder = function($newPath) {
+            return new Path($newPath);
+        };
+        return BuildPathInfo\WithExtension::using($this, $newExtension, $builder);
     }
 
     /**
@@ -217,15 +209,11 @@ class Path implements PathInfo
      *         the path that's on the filesystem
      * @return PathInfo
      */
-    public static function onFilesystem($fsOrPrefix, $path)
+    public static function onFilesystem($fsOrPrefix, $path) : PathInfo
     {
-        $fsPrefix = $fsOrPrefix instanceof Filesystem ? $fsOrPrefix->getFilesystemPrefix() : $fsOrPrefix;
-
-        $pathInfo = TypeConverters\ToPathInfo::from($path);
-        $retval = new Path(
-            $fsPrefix . PathInfo::FS_SEPARATOR . '/'
-        );
-
-        return $retval->withSuffix($path);
+        $builder = function($newPath) {
+            return new Path($newPath);
+        };
+        return BuildPathInfo\WithFilesystem::using($fsOrPrefix, $path, $builder);
     }
 }

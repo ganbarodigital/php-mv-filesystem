@@ -23,6 +23,11 @@
   - Added `ToPathComponents`
   - Added `ToPathInfo`
   - Added `ToPrefixedPath`
+* Added helpful tools for building new paths
+  - Added `AddChild`
+  - Added `StripExtension`
+  - Added `WithExtension`
+  - Added `WithFilesystem`
 * Added support for factories to create filesystems
   - Added `FilesystemFactory` interface
 * Added exceptions for when things go wrong

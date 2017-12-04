@@ -15,6 +15,9 @@
   - Added `RecursiveFilesystemContentsIterator` iterator
   - Added `FindAllFiles` high-level iterator
   - Added `FindAllFolders` high-level iterator
+  - Added `FindMatchingFiles` high-level iterator
+  - Added `FindMatchingFolders` high-level iterator
+  - Added `FindMatching` high-lvel iterator
 * Added support for understanding filesystem contents
   - Added `IsFile` check
   - Added `IsFolder` check

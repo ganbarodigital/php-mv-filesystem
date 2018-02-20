@@ -43,6 +43,8 @@
 
 namespace GanbaroDigital\Filesystem\V1;
 
+use DateTime;
+
 /**
  * represents something that a path points to
  *
@@ -121,4 +123,11 @@ interface FileInfo extends PathInfo
      * @return bool
      */
     public function isWritable() : bool;
+
+    /**
+     * when was this file last modified?
+     *
+     * @return DateTime
+     */
+    public function getLastModified() : DateTime;
 }

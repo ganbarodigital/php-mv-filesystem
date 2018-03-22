@@ -43,6 +43,7 @@
   - Added `Copy` operation
   - Added `CreateTemporaryCopy` operation
   - Added `GetFileContents` operation
+  - Added `GetImageDimensions` operation
   - Added `Move` operation
   - Added `PutFileContents` operation
   - Added `Transform` interface

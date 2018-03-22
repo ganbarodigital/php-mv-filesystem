@@ -77,6 +77,13 @@ interface FileInfo extends PathInfo
     public function getETag() : string;
 
     /**
+     * when was this file last modified?
+     *
+     * @return DateTime
+     */
+    public function getLastModified() : DateTime;
+
+    /**
      * what additional info do we know about the file?
      *
      * the contents are filesystem-specific!
@@ -132,11 +139,4 @@ interface FileInfo extends PathInfo
      * @return bool
      */
     public function isWritable() : bool;
-
-    /**
-     * when was this file last modified?
-     *
-     * @return DateTime
-     */
-    public function getLastModified() : DateTime;
 }

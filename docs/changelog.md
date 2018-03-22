@@ -47,3 +47,6 @@
   - Added `PutFileContents` operation
   - Added `Transform` interface
   - Added `ResizeImage` transform
+* Added support for key/value pair metadata
+  - Added `GetFileMetadata` operation
+  - Added `PutFileMetadata` operation

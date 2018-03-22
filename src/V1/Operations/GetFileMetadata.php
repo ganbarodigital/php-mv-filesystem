@@ -34,100 +34,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category  Libraries
- * @package   Filesystem\V1
+ * @package   Filesystem\V1\Operations
  * @author    Stuart Herbert <stuherbert@ganbarodigital.com>
  * @copyright 2017-present Ganbaro Digital Ltd www.ganbarodigital.com
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://ganbarodigital.github.io/php-mv-filesystem
  */
 
-namespace GanbaroDigital\Filesystem\V1;
+namespace GanbaroDigital\Filesystem\V1\Operations;
+
+use GanbaroDigital\AdaptersAndPlugins\V1\Operations\CallPlugin;
+use GanbaroDigital\Filesystem\V1\FileInfo;
+use GanbaroDigital\Filesystem\V1\Filesystem;
+use GanbaroDigital\MissingBits\ErrorResponders\OnFatal;
 
 /**
- * represents something that a path points to
- *
- * this value knows things about what the path is pointing to
+ * return the metadata attached to a file
  */
-interface FileInfo extends PathInfo
+class GetFileMetadata
 {
     /**
-     * what is the real path to this file on the filesystem?
+     * get the metadata attached to a file
      *
-     * @return string
-     */
-    public function getRealPath() : string;
-
-    /**
-     * how big is this file?
-     *
-     * @return int
-     */
-    public function getSize() : int;
-
-    /**
-     * what is the checksum for this file?
-     *
-     * ETags are a common technique to tell if a file has changed anywhere
-     * or not
-     *
-     * @return string
-     */
-    public function getETag() : string;
-
-    /**
-     * what additional info do we know about the file?
-     *
-     * the contents are filesystem-specific!
-     *
+     * @param  Filesystem $fs
+     *         the filesystem we are working with
+     * @param  string|PathInfo $path
+     *         what are we reading?
+     * @param  OnFatal $onFatal
+     *         what do we do when the reading fails?
      * @return array
+     *         the metadata attached to $path
      */
-    public function getMetadata(): array;
-
-    /**
-     * can we execute this file?
-     *
-     * @return bool
-     */
-    public function isExecutable() : bool;
-
-    /**
-     * is this a real file on the filesystem?
-     *
-     * @return bool
-     *         - `false` if this is a symlink
-     *         - `false` if this is a folder
-     *         - `true` otherwise
-     */
-    public function isFile() : bool;
-
-    /**
-     * is this a folder on the filesystem?
-     *
-     * @return bool
-     *         - `false` if this is a file
-     *         - `false` if this is a symlink
-     *         - `true` otherwise
-     */
-    public function isFolder() : bool;
-
-    /**
-     * is this a symlink on the filesystem?
-     *
-     * @return bool
-     */
-    public function isLink() : bool;
-
-    /**
-     * can we read this file?
-     *
-     * @return bool
-     */
-    public function isReadable() : bool;
-
-    /**
-     * can we write into this file?
-     *
-     * @return bool
-     */
-    public function isWritable() : bool;
+    public static function using(Filesystem $fs, $path, OnFatal $onFatal) : array
+    {
+        return CallPlugin::using($fs, "Operations\\GetFileMetadata", "using", $fs, $path, $onFatal);
+    }
 }
